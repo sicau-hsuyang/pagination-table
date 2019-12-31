@@ -1,31 +1,30 @@
 <template>
     <el-table-column
-        v-if="meta.visible"
-        :label="meta.label"
-        :width="meta.width"
-        :min-width="meta.minWidth"
-        :max-width="meta.maxWidth"
-        :sortable="meta.sortable"
-        :align="meta.align"
-        :class-name="meta.className"
-        :resizable="
-        meta.resizable"
+        v-if="config.show"
         :prop="prop"
-        :show-overflow-tooltip="meta.showOverflowTooltip"
+        :label="config.label"
+        :show-overflow-tooltip="config.showOverflowTooltip"
+        :width="config.width"
+        :min-width="config.minWidth"
+        :max-width="config.maxWidth"
+        :sort-method="config.sortMethod"
+        :sortable="config.sortable"
+        :align="config.align"
     >
-        <template slot-scope="{ row, index }">
-            <table-column-helper
-                v-if="typeof meta.render === 'function'"
-                :render="meta.render"
+        <template slot-scope="{ row }">
+            <TableColumnHelper
+                v-if="typeof config.render === 'function'"
+                :render="column.render"
                 :row="row"
-                :index="index"
-            ></table-column-helper>
+            ></TableColumnHelper>
             <div
-                v-else-if="typeof meta.html === 'function'"
-                v-html="meta.html(row[prop], row, index)"
+                v-else-if="typeof config.html === 'function'"
+                v-html="config.html(row[prop], row)"
             >
             </div>
-            <span v-else>{{ typeof meta.formatter === 'function' ? meta.formatter(row[prop], row, index) : row[prop] }}</span>
+            <span v-else>
+                {{ typeof config.formatter === 'function' ? renderContent(config.formatter(row[prop], row)) : renderContent(row[prop], row) }}
+            </span>
         </template>
     </el-table-column>
 </template>
@@ -33,7 +32,7 @@
 <script>
 import TableColumnHelper from "./table-column-helper";
 export default {
-    name: "BaseTableColumn",
+    name: "BaseColumn",
     components: {
         TableColumnHelper
     },
@@ -44,46 +43,74 @@ export default {
         },
         column: {
             type: Object,
-            required: true
+            required: false,
+            default: () => {
+                return this.defaultConfig();
+            }
         }
+    },
+    data() {
+        const config = this.defaulConfig();
+        return {
+            config
+        };
     },
     watch: {
         column: {
             handler() {
-                Object.assign(this.meta, this.column);
+                Object.assign(this.config, this.column);
             },
             deep: true
         }
     },
     created() {
-        Object.assign(this.meta, this.column);
-    },
-    data() {
-        var meta = this.defaultConfig();
-        return {
-            meta
-        };
-    },
-    mounted() {
-        this.$nextTick(() => {
-            this.$emit("loaded", this.prop);
-        });
+        Object.assign(this.config, this.column || {});
     },
     methods: {
-        defaultConfig() {
+        defaulConfig() {
             return {
+                // 是否显示表格字段
+                show: true,
+                // String 必填 字段名称
                 label: "字段",
-                html: undefined,
-                align: "left",
-                visible: true,
-                filterable: false,
-                render: undefined,
+                // Boolean 可选
                 showOverflowTooltip: false,
-                className: "",
-                resizable: true,
-                formatter: undefined
+                // String|Number|undefined 可选 字段的宽度
+                width: undefined,
+                // String|Number|undefined 可选 字段的最小宽度
+                minWidth: undefined,
+                // String|Number|undefined 可选 字段的最大宽度
+                maxWidth: undefined,
+                // String|Function 可选 字段排序方式
+                sortable: undefined,
+                // Function 可选 字段自定义排序方式
+                sortMethod: undefined,
+                // String 可选 字段对齐形式 默认左对齐
+                align: "left",
+                // Function 可选 render必须提供，h Vue中render函数的参数h
+                // 返回为JSX内容或者render函数的内容形式
+                // render(h) {
+                //   return (``)
+                // },
+                // Boolean|Object  可选 字段 是否参与搜索条件 默认false
+                // 当Array和 true的时候，代表可以参与表格的搜索
+                // 如果是数组，说明表格是selector，则数据的内容
+                // 是候选项
+                filterable: false,
+                // Number  搜索条件的排序 可选
+                order: undefined,
+                // Function| undefined  可选 将字段的内容渲染成字符串 以html的形式插入
+                html: undefined, // (propVal, row) => { return `` }
+                // 同html
+                formatter: undefined // (propVal, row) => {}
             };
+        },
+        renderContent(content) {
+            return typeof content !== "undefined" ? content : "-";
         }
     }
 };
 </script>
+
+<style lang="scss" scoped>
+</style>

@@ -111,17 +111,17 @@ export default {
         this.updateConfig();
         // 如果启动了服务器排序
         if (this.meta.serverSort) {
-            // eslint-disable-next-line no-unused-vars
             Object.entries(this.columns).forEach(([prop, column]) => {
                 // 此时需要排序的表格字段便失去了客户端排序的能力
                 column.sortable && (column.sortable = "custom");
             });
         }
-
-        console.log(this);
     },
     mounted() {
-        !this.meta.lazyLoad && this.loadData(this.queryParams);
+        if (!this.meta.lazyLoad) {
+            this.meta.serverSort && (this.preventTableSort = true);
+            this.loadData(this.queryParams);
+        }
     },
     methods: {
         updateConfig() {
@@ -225,14 +225,20 @@ export default {
         handleSizeChange(val) {
             this.pageSize = val;
             this.currentPage = 1;
+            // 由于采用了服务端排序之后 需要先让表格展示一个排序的形态
+            // 需要手动调用排序方法，但是会触发表格的排序处理事件，引发重复请求
+            // 需要阻挡掉对table - sort之后的重复的请求
+            this.meta.serverSort && (this.preventTableSort = true);
             this.loadData(this.queryParams);
         },
         handleCurrentChange(val) {
             this.currentPage = val;
+            this.meta.serverSort && (this.preventTableSort = true);
             this.loadData(this.queryParams);
         },
         reload(back2first) {
             this.meta.showPagination && back2first && this.back2First();
+            this.meta.serverSort && (this.preventTableSort = true);
             this.loadData(this.queryParams);
         },
         handleColumnMounted(prop) {
@@ -302,20 +308,13 @@ export default {
             shouldSort && this.clearSort();
             this.clearSelection();
             // 每次表格刷新完成的时候 对外界通知事件
-            /**this.$nextTick(() => {
+            this.$nextTick(() => {
                 // 当指定了当前表格有的排序字段才可以排
                 shouldSort && this.sort();
                 // 因为sort可以有默认的排序 但是 checked 没有
-                // 因此 此刻告诉外界加载完成
+                // 因此 此刻将toggleSelection的实现交给外部
                 this.$emit("loaded", resp);
-            });**/
-            setTimeout(() => {
-                // 当指定了当前表格有的排序字段才可以排
-                shouldSort && this.sort();
-                // 因为sort可以有默认的排序 但是 checked 没有
-                // 因此 此刻告诉外界加载完成
-                this.$emit("loaded", resp);
-            }, 500);
+            });
         },
         clearSort() {
             this.$refs.table && this.$refs.table.clearSort();
@@ -332,6 +331,11 @@ export default {
             this.$emit("selection-change", selection);
         },
         handleSortChange(sortParams) {
+            if (this.preventTableSort) {
+                // 阻挡掉一次重复的刷新 然后立即归位
+                this.preventTableSort = false;
+                return;
+            }
             // 覆盖之前默认的排序方式
             Object.assign(this.meta.defaultSort, sortParams);
             if (this.meta.serverSort) {
