@@ -92,22 +92,26 @@ export default {
         };
     },
     methods: {
-        loadData({ pageSize, pageNum, name, ticket }, sortpParams) {
+        async loadData({ pageSize, pageNum, name, ticket }, sortpParams) {
             console.log(pageSize, pageNum, name, ticket, sortpParams);
-            return {
-                total: 100,
-                data: [
-                    {
-                        id: 1,
-                        name: "螺髻山",
-                        url:
-                            "https://baike.baidu.com/item/%E8%9E%BA%E9%AB%BB%E5%B1%B1%E9%A3%8E%E6%99%AF%E5%8C%BA/1226258?fr=aladdin",
-                        location: "凉山彝族自治州普格县",
-                        ticket: true,
-                        createTime: Date.now()
-                    }
-                ]
-            };
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve({
+                        total: 100,
+                        data: [
+                            {
+                                id: 1,
+                                name: "螺髻山",
+                                url:
+                                    "https://baike.baidu.com/item/%E8%9E%BA%E9%AB%BB%E5%B1%B1%E9%A3%8E%E6%99%AF%E5%8C%BA/1226258?fr=aladdin",
+                                location: "凉山彝族自治州普格县",
+                                ticket: true,
+                                createTime: Date.now()
+                            }
+                        ]
+                    });
+                }, 500);
+            });
         },
         handleDel(row) {
             alert(row);

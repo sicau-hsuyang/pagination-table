@@ -66,6 +66,9 @@ export default {
     created() {
         Object.assign(this.config, this.column || {});
     },
+    mounted() {
+        this.$emit("loaded", this.prop);
+    },
     methods: {
         defaulConfig() {
             return {

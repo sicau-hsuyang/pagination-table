@@ -99,18 +99,11 @@ export default {
             tableList: []
         };
     },
-    watch: {
-        config: {
-            handler() {
-                this.updateConfig();
-            },
-            deep: true
-        }
-    },
     created() {
-        this.updateConfig();
+        this.updateConfig(true);
         // 如果启动了服务器排序
         if (this.meta.serverSort) {
+            // eslint-disable-next-line no-unused-vars
             Object.entries(this.columns).forEach(([prop, column]) => {
                 // 此时需要排序的表格字段便失去了客户端排序的能力
                 column.sortable && (column.sortable = "custom");
@@ -340,6 +333,8 @@ export default {
             Object.assign(this.meta.defaultSort, sortParams);
             if (this.meta.serverSort) {
                 // 加载完成之后 表格不应该再进行排序
+                // 服务端排序之后应该回到首页
+                this.back2First();
                 this.loadData(this.queryParams, false);
                 this.$emit("sort-change", sortParams);
             }
