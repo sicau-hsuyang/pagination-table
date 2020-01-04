@@ -123,11 +123,7 @@ class TableConfig {
 
   // 启用服务器排序后 降序和升序的规则 默认值 如下
   serverSortOrderMapping: (direction: string) => (null | string) = (direction: string) => {
-      return direction === null
-          ? null
-          : direction === "ascending"
-          ? "ASC"
-          : "DESC";
+      return direction === null? null : direction === "ascending" ? "ASC": "DESC";
   }
 }
 ```
