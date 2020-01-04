@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui'
-import PaginationTable from './components/BaseTable'
+import PaginationTable from 'pagination-table'
 Vue.config.productionTip = false
 import 'element-ui/lib/theme-chalk/index.css';
 

@@ -2,14 +2,16 @@
 表格列通过使用配置呈现不同的功能，可支持自定义列、v-html、formatter等功能，表格具备搜索和分页功能，可以通过配置开关该功能。
 
 ## Get started
-####安装插件
-todo（目前暂未发布npm包）
-####注册插件
+#### 安装插件
+``` bash
+npm install pagination-table
+```
+#### 注册插件
 ``` js
 import TablePagination from 'pagination-table'
 Vue.use(TablePagination)
 ```
-####基本使用 
+#### 基本使用 
 表格需要config和columns两个必选参数
 ``` html
 <template>
@@ -113,13 +115,13 @@ class TableConfig {
   spanMethod: undefined;
 
   // 可选 是否启用服务器排序
-  serverSort: Boolean = false
+  serverSort: Boolean = false;
 
   // 可选 当启用服务器排序后，排序顺序需要发送给什么样的key给服务器 默认值 direction
-  orderDirection: "direction",
+  orderDirection: string = "direction";
   
   // 可选 启用服务器排序后，需要对什么字段进行排序 默认值 orderFiled 
-  orderField: "orderField",
+  orderField: string = "orderField";
 
   // 启用服务器排序后 降序和升序的规则 默认值 如下
   serverSortOrderMapping: (direction: string) => (null | string) = (direction: string) => {
@@ -132,7 +134,7 @@ class TableConfig {
 class TableColumn {
 
   // 必选 字段名称 
-  label: string = "字段",
+  label: string = "字段";
 
   // 可选 是否显示表格字段 默认值 true
   show: Boolean = true;
