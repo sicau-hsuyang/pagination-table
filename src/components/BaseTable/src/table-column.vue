@@ -29,8 +29,11 @@
     </el-table-column>
 </template>
 
-<script>
+<script lang="javascript">
 import TableColumnHelper from "./table-column-helper";
+/**
+ * @type { TableColumn }
+ */
 export default {
     name: "BaseColumn",
     components: {
@@ -70,6 +73,9 @@ export default {
         this.$emit("loaded", this.prop);
     },
     methods: {
+        /**
+         * @returns {TableColumn}
+         */
         defaulConfig() {
             return {
                 // 是否显示表格字段
