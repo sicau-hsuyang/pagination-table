@@ -1,3 +1,3 @@
-class TableConfig {
-  height: undefined
+interface TableConfig {
+  height: string = "200"
 }

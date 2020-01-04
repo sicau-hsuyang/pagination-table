@@ -37,13 +37,21 @@ Vue.use(TablePagination)
       }
     },
     methods: {
-      loadData(quertParams, sortParams){
-
+      loadData(queryParams, sortParams){
+        // 必须返回数组
+        return []
+      },
+      /** 手动刷新表格
+       * @params {Boolean} back2first 是否回到首页
+       */
+      reloadTable(back2first) {
+        this.$refs.table && this.$refs.table.reload(back2first)
       }
     }
   }
 </script>  
 ```
+
 参数介绍
 ``` typescript
 class TableConfig {
@@ -57,7 +65,7 @@ class TableConfig {
       throw "the [fetch-tble-data] must be implemented";
   };
 
-  // 可选 初始化时，是否不立即加载数据 默认false
+  // ** 可选 初始化时，是否立即加载数据 默认立即加载
   lazyLoad: Boolean = false;
 
   // 可选 是否展示表头 默认true
@@ -86,7 +94,7 @@ class TableConfig {
   showPagination: Boolean = true
 
   // 可选 默认的分页信息
-  paginationInfo: PaginationParams = {
+  paginationInfo: Object = {
       total: 0,
       currentPage: 1,
       pageSize: 10
@@ -102,11 +110,11 @@ class TableConfig {
   // 当使用树形表格的时候 必须指定该项
   rowKey: string  =  "id"；
   
-  // 可选 树形表格树形 
+  // 可选 树形表格属性
   treeProps: Object = { children: "children", hasChildren: "hasChildren" };
 
   // 可选 排序方式 
-  defaultSort: SortParams = { prop: "createDate", order: "descending" };
+  defaultSort: Object = { prop: "createDate", order: "descending" };
 
   // 可选 tooltip的主题  默认 dark
   tooltipEffect: string = "dark"
@@ -160,9 +168,11 @@ class TableColumn {
   // 可选 字段对齐形式 默认左对齐
   align: string|undefined = "left";
 
-  // 可选 render必须提供，h Vue中render函数的参数h
+  // 可选 render必须提供，h Vue中render函数的参数h, row是表格当前行对象
   // 返回为JSX内容或者render函数的内容形式 默认 undefined
-  render: undeinfed | (h:VNode) => VueComponent = undefined
+  // 由于直接编写render函数的开发效率较低，因此强烈建议在项目中
+  // 使用jsx
+  render: undeinfed | (h:VNode, row: Object) => VueComponent = undefined
 
   // 可选 将字段的内容渲染成字符串 以v-html的形式插入
   html: undefined | (propVal: Object, row: Object) => string = undefined;
@@ -204,3 +214,5 @@ class FilerConfig {
 
 }
 ```
+### 友情链接
+[如何让你的项目支持JSX](https://github.com/vuejs/jsx#installation "如何让你的项目支持JSX")
