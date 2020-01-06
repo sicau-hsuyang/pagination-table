@@ -2,7 +2,7 @@ import Table from './src'
 
 const PaginationTable = {}
 
-PaginationTable.install = function (Vue) {
+PaginationTable.install = function (Vue, options) {
   typeof Object.isObject !== "function" &&
     (Object.isObject = function (obj) {
       return (
@@ -52,7 +52,8 @@ PaginationTable.install = function (Vue) {
     (Array.prototype.orderBy = function (delegate) {
       return this._orderBy(delegate, "asc");
     });
-  Vue.component("PaginationTable", Table)
+  let config = options || { name: "PaginationTable" }
+  Vue.component(config.name, Table)
 }
 
 export default PaginationTable;

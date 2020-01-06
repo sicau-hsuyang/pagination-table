@@ -39,6 +39,8 @@ Vue.use(TablePagination)
     methods: {
       loadData(queryParams, sortParams){
         // 必须返回数组
+        // 如果不用分页 只需要返回数组即可
+        // 如果启用分页 需要返回数据和总条数 例如：{ data: [],total: 0 }
         return []
       },
       /** 手动刷新表格
@@ -137,6 +139,11 @@ class TableConfig {
   }
 }
 ```
+```typescript
+class TableCloumns {
+  [columnProp: string]: TableColumn
+}
+```
 表格列可支持的配置
 ``` ts
 class TableColumn {
@@ -160,7 +167,7 @@ class TableColumn {
   maxWidth: undefined|number|string = undefined;
 
   // 可选 表格字段是否支持排序
-  sortable: undefined|string|Boolen = undefined;
+  sortable: undefined|string|Boolean = undefined;
 
   // 可选 字段自定义排序方式
   sortMethod: undefined:Function = undefined;
@@ -195,7 +202,7 @@ interface Option {
   value: any;
 } 
 
-class FilerConfig {
+class FilterConfig {
 
   // 可选 是否直接将当前组件插入合适的位置 
   // 当指定了

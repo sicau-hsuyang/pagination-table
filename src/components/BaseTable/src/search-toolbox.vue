@@ -52,6 +52,11 @@
                 @click="handleQuery"
             >查询</el-button>
             <el-button @click="handleReset">重置</el-button>
+            <el-button
+                v-if="config.columnConfigurable"
+                type="primary"
+                @click="tableSetting"
+            >设置</el-button>
         </div>
     </div>
 </template>
@@ -64,15 +69,32 @@ export default {
             type: Object,
             required: false,
             default: () => ({})
+        },
+        config: {
+            type: Object,
+            required: false,
+            default: () => ({})
         }
     },
     data() {
+        var meta = this.defaultConfig();
         return {
-            searchs: []
+            searchs: [],
+            meta
         };
+    },
+    watch: {
+        config: {
+            handler() {
+                Object.assign(this.meta, this.config);
+            },
+            deep: true
+        }
     },
     created() {
         this.setSearchBox();
+        Object.assign(this.meta, this.config);
+        console.log(this.searchs);
     },
     methods: {
         initialize() {
@@ -83,21 +105,24 @@ export default {
         setSearchBox() {
             this.searchs.clear();
             this.searchs.push(
-                ...Object.values(
-                    Object.assign(this.defaultConfig(), this.mappingColumn())
-                ).orderBy(x => x.order)
+                ...Object.values(this.mappingColumn()).orderBy(x => x.order)
             );
         },
         defaultConfig() {
-            return {};
+            return {
+                columnConfigurable: true
+            };
         },
         mappingColumn() {
             const mappingObj = {};
             Object.entries(this.columns || {}).forEach(([key, val]) => {
-                if (val.filterable && val.label !== "操作") {
+                if (val.filterable) {
                     mappingObj[key] = {
                         prop: key,
-                        order: val.order || 1000,
+                        order:
+                            val.filterable && val.filterable.order
+                                ? val.filterable.order
+                                : 1000,
                         label: val.label,
                         value: ""
                     };
@@ -126,6 +151,9 @@ export default {
         handleReset() {
             this.initialize();
             this.$emit("query", {});
+        },
+        tableSetting() {
+            this.$emit("table-setting");
         }
     }
 };
@@ -144,7 +172,7 @@ export default {
     &-buttons {
         text-align: right;
         padding-top: 20px;
-        width: 200px;
+        width: 240px;
     }
 }
 

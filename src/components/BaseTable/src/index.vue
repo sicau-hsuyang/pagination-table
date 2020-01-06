@@ -1,9 +1,17 @@
 <template>
     <div class="base-table">
+        <column-ctrl-dialog
+            ref="dialog"
+            @submit="confirmConfig"
+            v-if="meta.columnConfigurable"
+            :columns="columns"
+        ></column-ctrl-dialog>
         <template v-if="meta.showSearchbox">
             <search-toolbox
                 ref="search"
+                :config="{ columnConfigurable: meta.columnConfigurable }"
                 :columns="columns"
+                @table-setting="tableSetting"
                 @query="handleQuery"
             />
             <div class="divider"></div>
@@ -72,6 +80,7 @@
 <script>
 export default {
     components: {
+        ColumnCtrlDialog: () => import("./column-ctrl-dialog"),
         TableColumnHelper: () => import("./table-column-helper"),
         BaseColumn: () => import("./table-column.vue"),
         SearchToolbox: () => import("./search-toolbox.vue")
@@ -103,10 +112,18 @@ export default {
         this.updateConfig(true);
         // 如果启动了服务器排序
         if (this.meta.serverSort) {
-            // eslint-disable-next-line no-unused-vars
             Object.entries(this.columns).forEach(([prop, column]) => {
                 // 此时需要排序的表格字段便失去了客户端排序的能力
                 column.sortable && (column.sortable = "custom");
+                column.prop = prop;
+                // 由于此时需要在上面展示 因此 需要用$set
+                this.$set(
+                    column,
+                    "visible",
+                    typeof column.visible !== "undefined"
+                        ? column.visible
+                        : true
+                );
             });
         }
     },
@@ -189,8 +206,12 @@ export default {
                         : direction === "ascending"
                         ? "ASC"
                         : "DESC";
-                }
+                },
+                columnConfigurable: true
             };
+        },
+        tableSetting() {
+            this.$refs.dialog && this.$refs.dialog.showDialog();
         },
         initTable() {
             this.queryParams = {};
@@ -348,6 +369,11 @@ export default {
             }
             this.tableList.forEach(row => {
                 this.$refs.table.toggleRowSelection(row, row[prop]);
+            });
+        },
+        confirmConfig(columns) {
+            Object.entries(columns).forEach(([prop, value]) => {
+                this.columns[prop].visible = value.visible;
             });
         }
     }

@@ -1,6 +1,6 @@
 <template>
     <el-table-column
-        v-if="config.show"
+        v-if="config.visible"
         :prop="prop"
         :label="config.label"
         :show-overflow-tooltip="config.showOverflowTooltip"
@@ -79,7 +79,7 @@ export default {
         defaulConfig() {
             return {
                 // 是否显示表格字段
-                show: true,
+                visible: true,
                 // String 必填 字段名称
                 label: "字段",
                 // Boolean 可选

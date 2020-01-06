@@ -1,6 +1,6 @@
 <template>
     <div>
-        <PaginationTable
+        <BaseTable
             class="pagi-table"
             ref="table"
             :config="config"
@@ -69,6 +69,7 @@ export default {
                 ticket: {
                     label: "是否需要门票",
                     filterable: {
+                        order: 2,
                         options: [
                             {
                                 label: "是",
