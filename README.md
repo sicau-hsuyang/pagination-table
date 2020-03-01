@@ -1,22 +1,22 @@
 # 基于ElementUI-Table构建的可分页搜索表格
 表格列通过使用配置呈现不同的功能，可支持自定义列、v-html、formatter等功能，表格具备搜索和分页功能，可以通过配置开关该功能。
 ![无法加载图片](https://raw.githubusercontent.com/Sicau-HsuYang/pagination-table/master/src/assets/table-demo.png "图片title")
-## Get start
-#### 安装插件
+## 开始使用
+## 1、使用webpack构建。
+### 安装插件
 ``` bash
 npm install pagination-table
 ```
-#### 注册插件
+### 注册插件
 ``` js
 import TablePagination from 'pagination-table'
 Vue.use(TablePagination)
 ```
-#### 基本使用 
-表格需要config和columns两个必选参数
+### 基本使用 
+表格需要config和columns两个必选参数，name为必选参数，当需要配置表格列显示隐藏持久化存储的时候需要提供该项。
 ``` html
 <template>
-  <base-table ref="table" :config="tableConfig"
-  :columns="tableColumns"></base-table>
+  <base-table ref="table" :config="tableConfig" :columns="tableColumns"></base-table>
 </template>
 <script>
   export default {
@@ -53,8 +53,144 @@ Vue.use(TablePagination)
   }
 </script>  
 ```
+## 2、直接使用
+由于直接在页面中使用缺少构建工具的支持，因此在render函数中无法使用jsx。render函数的详细用法请参考：[跳转门](https://cn.vuejs.org/v2/guide/render-function.html#createElement-%E5%8F%82%E6%95%B0 "render函数参数")
 
-参数介绍
+```html
+<div id="app">
+    <base-table class="pagi-table" ref="table" name="landscapes" :config="config" :columns="columns" />
+</div>
+<!--
+ pagitaion table dependencies vue.js & element-ui.js
+-->
+<script src="https://cdn.bootcss.com/vue/2.6.11/vue.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.2/axios.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.13.0/index.js"></script>
+<script src="./libs/main.js">
+</script>
+<script>
+
+  Vue.use(PaginationTable.default, {
+    name: "BaseTable"
+  })
+
+  new Vue({
+    el: '#app',
+    data() {
+      var _this = this;
+      return {
+        config: {
+          operation: {
+            //直接饮用，render函数无法使用jsx
+            render(h, row) {
+              return h('div', [
+                h('el-button', {
+                  props: {
+                    size: "mini",
+                    type: "success"
+                  },
+                  domProps: {
+                    innerText: "标记",
+                  },
+                  on: {
+                    click: ($event) => {
+                      $event.preventDefault();
+                      $event.stopPropagation();
+                      _this.handleMark(row);
+                    }
+                  }
+                }), h('el-button', {
+                  props: {
+                    size: "mini",
+                    type: "danger"
+                  },
+                  on: {
+                    click: ($event) => {
+                      $event.stopPropagation();
+                      $event.preventDefault();
+                      _this.handleDel(row);
+                    }
+                  },
+                  domProps: {
+                    innerText: '删除'
+                  }
+                })]);
+            }
+          },
+          defaultSort: { prop: "createTime", order: "descending" },
+          serverSort: false,
+          showSearchbox: true,
+          showCheckbox: true,
+          fetchTableData: this.loadData,
+          columnConfigurable: true
+        },
+        columns: {
+          id: {
+            label: "景点编号"
+          },
+          name: {
+            label: "景点",
+            filterable: true,
+            html(name, row) {
+              return `<a class="link" href=${row.url} target="_blank">${name}</a>`;
+            }
+          },
+          location: {
+            label: "所在位置"
+          },
+          ticket: {
+            label: "是否需要门票",
+            filterable: {
+              order: 2,
+              options: [
+                {
+                  label: "是",
+                  value: 1
+                },
+                {
+                  label: "否",
+                  value: 2
+                }
+              ]
+            },
+            formatter(ticket) {
+              return ticket ? "是" : "否";
+            }
+          },
+          price: {
+            label: "价格",
+            formatter(price) {
+              return typeof price === "number" && !Number.isNaN(price)
+                ? "￥" + price
+                : "-";
+            }
+          },
+          createTime: {
+            label: "创建时间",
+            sortable: true,
+          }
+        }
+      };
+    },
+    methods: {
+      async loadData({ pageSize, pageNum, name, ticket }, sortpParams) {
+        let res = await axios.get("/api/data", {
+          params: { pageSize,pageNum,name,ticket, ...sortpParams }
+        });
+        return res.data;
+      },
+      handleDel(row) {
+        console.log(row);
+      },
+      handleMark(row) {
+        console.log(row);
+      },
+    }
+  })
+</script>
+```
+
+#### 参数介绍
 ``` typescript
 class TableConfig {
   
@@ -144,7 +280,7 @@ class TableCloumns {
   [columnProp: string]: TableColumn
 }
 ```
-表格列可支持的配置
+##### 表格列可支持的配置
 ``` ts
 class TableColumn {
 
@@ -192,7 +328,7 @@ class TableColumn {
 
 }
 ```
-搜索条件配置参数
+##### 搜索条件配置参数
 ```ts
 interface Option {
   // 必选 下拉选项文字

@@ -94,7 +94,6 @@ export default {
     created() {
         this.setSearchBox();
         Object.assign(this.meta, this.config);
-        console.log(this.searchs);
     },
     methods: {
         initialize() {
@@ -172,7 +171,7 @@ export default {
     &-buttons {
         text-align: right;
         padding-top: 20px;
-        width: 240px;
+        min-width: 160px;
     }
 }
 

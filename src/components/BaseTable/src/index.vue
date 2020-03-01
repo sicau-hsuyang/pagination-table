@@ -48,7 +48,7 @@
                 :prop="prop"
             ></base-column>
             <el-table-column
-                v-if="typeof meta.operation !== 'undefined'"
+                v-if="showOperation"
                 label="操作"
             >
                 <template slot-scope="{ row, index }">
@@ -80,12 +80,20 @@
 <script>
 import deepClone from "lodash.clone";
 const NAMESPACE = "PaginationTable";
+import ColumnCtrlDialog from "./column-ctrl-dialog";
+import TableColumnHelper from "./table-column-helper";
+import BaseColumn from "./table-column.vue";
+import SearchToolbox from "./search-toolbox.vue";
 export default {
     components: {
-        ColumnCtrlDialog: () => import("./column-ctrl-dialog"),
-        TableColumnHelper: () => import("./table-column-helper"),
-        BaseColumn: () => import("./table-column.vue"),
-        SearchToolbox: () => import("./search-toolbox.vue")
+        ColumnCtrlDialog,
+        TableColumnHelper,
+        BaseColumn,
+        SearchToolbox
+        // ColumnCtrlDialog: () => import("./column-ctrl-dialog"),
+        // TableColumnHelper: () => import("./table-column-helper"),
+        // BaseColumn: () => import("./table-column.vue"),
+        // SearchToolbox: () => import("./search-toolbox.vue")
     },
     props: {
         columns: {
@@ -101,6 +109,14 @@ export default {
             type: String,
             required: false,
             default: ""
+        }
+    },
+    computed: {
+        showOperation() {
+            return (
+                Object.prototype.toString.call(this.meta.operation) ===
+                "[object Object]"
+            );
         }
     },
     data() {
@@ -130,6 +146,8 @@ export default {
                     visibleConfig = JSON.parse(
                         localStorage.getItem(`${NAMESPACE}/${this.name}`)
                     );
+                    Object.prototype.toString.call(visibleConfig) !=
+                        "[object Object]" && (visibleConfig = {});
                 } catch (ex) {
                     visibleConfig = {};
                 }
