@@ -48,12 +48,12 @@
                 :prop="prop"
             ></base-column>
             <el-table-column
-                v-if="typeof meta.showOperation !== 'undefined'"
+                v-if="typeof meta.operation !== 'undefined'"
                 label="操作"
             >
                 <template slot-scope="{ row, index }">
                     <table-column-helper
-                        :render="meta.showOperation.render"
+                        :render="meta.operation.render"
                         :row="row"
                         :index="index"
                     ></table-column-helper>
@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import deepClone from "lodash.clone";
+const NAMESPACE = "PaginationTable";
 export default {
     components: {
         ColumnCtrlDialog: () => import("./column-ctrl-dialog"),
@@ -94,6 +96,11 @@ export default {
             type: Object,
             required: false,
             default: () => ({})
+        },
+        name: {
+            type: String,
+            required: false,
+            default: ""
         }
     },
     data() {
@@ -110,22 +117,34 @@ export default {
     },
     created() {
         this.updateConfig(true);
-        // 如果启动了服务器排序
-        if (this.meta.serverSort) {
-            Object.entries(this.columns).forEach(([prop, column]) => {
-                // 此时需要排序的表格字段便失去了客户端排序的能力
-                column.sortable && (column.sortable = "custom");
-                column.prop = prop;
-                // 由于此时需要在上面展示 因此 需要用$set
-                this.$set(
-                    column,
-                    "visible",
-                    typeof column.visible !== "undefined"
-                        ? column.visible
-                        : true
-                );
-            });
-        }
+        Object.entries(this.columns).forEach(([prop, column]) => {
+            //如果启动了服务器排序 此时需要排序的表格字段便失去了客户端排序的能力
+            this.meta.serverSort &&
+                column.sortable &&
+                (column.sortable = "custom");
+            column.prop = prop;
+            // 由于此时需要在上面展示 因此 需要用$set
+            let visibleConfig = {};
+            if (this.name) {
+                try {
+                    visibleConfig = JSON.parse(
+                        localStorage.getItem(`${NAMESPACE}/${this.name}`)
+                    );
+                } catch (ex) {
+                    visibleConfig = {};
+                }
+            }
+            this.$set(
+                column,
+                "visible",
+                //如果缓存里面有 就读取缓存内容 否则读取配置内容
+                typeof visibleConfig[column.prop] !== "undefined"
+                    ? visibleConfig[column.prop]
+                    : typeof column.visible !== "undefined"
+                    ? column.visible
+                    : true
+            );
+        });
     },
     mounted() {
         if (!this.meta.lazyLoad) {
@@ -159,7 +178,7 @@ export default {
                 // 可选 是否显示搜索条件
                 showSearchbox: false,
                 // 可选 是否显示操作列
-                showOperation: false,
+                operation: false,
                 // 可选 是否显示表格的边框
                 border: true,
                 // 可选 是否显示波浪纹
@@ -375,6 +394,39 @@ export default {
             Object.entries(columns).forEach(([prop, value]) => {
                 this.columns[prop].visible = value.visible;
             });
+            if (!this.name) {
+                console.error(
+                    "The configuration of the table column will not take effect if you do not configure [name]"
+                );
+            } else {
+                let persisitKey = `${NAMESPACE}/${this.name}`;
+                let visiblity = {};
+                Object.entries(columns).map(([prop, value]) => {
+                    visiblity[prop] = value.visible;
+                });
+                localStorage.setItem(persisitKey, JSON.stringify(visiblity));
+            }
+        },
+        _getTransformData(list) {
+            return list.map(item => {
+                Object.entries(item).map(([prop, value]) => {
+                    this.columns[prop] &&
+                        typeof this.columns[prop].formatter === "function" &&
+                        (item[prop] = this.columns[prop].formatter(
+                            value,
+                            item
+                        ));
+                });
+                return item;
+            });
+        },
+        /**
+         * 获取表格的数据
+         * @param {Boolean} raw 是否是纯数据
+         */
+        getTableData(raw = true) {
+            let outputList = this.tableList.map(item => deepClone(item));
+            return raw ? outputList : this._getTransformData(outputList);
         }
     }
 };
@@ -388,5 +440,9 @@ export default {
 .divider {
     border-bottom: 1px solid #e5e5e5;
     margin: 20px 0;
+}
+
+.pagination-wrapper {
+    margin-top: 10px;
 }
 </style>

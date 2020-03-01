@@ -5,6 +5,10 @@ import Table from './components/BaseTable'
 Vue.config.productionTip = false
 import 'element-ui/lib/theme-chalk/index.css';
 
+import http from './api'
+
+Vue.prototype.$http = http;
+
 Vue.use(ElementUI);
 Vue.use(Table, {
   name: "BaseTable"

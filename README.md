@@ -84,7 +84,7 @@ class TableConfig {
   showSearchbox: Boolean = false;
 
   // 可选 是否显示操作列
-  showOperation: Boolean = false
+  operation: Boolean = false
   
   // 可选 是否显示表格的边框
   border: Boolean = true
