@@ -48,12 +48,12 @@
                 :prop="prop"
             ></base-column>
             <el-table-column
-                v-if="typeof meta.showOperation !== 'undefined'"
+                v-if="showOperation"
                 label="操作"
             >
                 <template slot-scope="{ row, index }">
                     <table-column-helper
-                        :render="meta.showOperation.render"
+                        :render="meta.operation.render"
                         :row="row"
                         :index="index"
                     ></table-column-helper>
@@ -417,5 +417,9 @@ export default class Table extends Vue{
 .divider {
     border-bottom: 1px solid #e5e5e5;
     margin: 20px 0;
+}
+
+.pagination-wrapper {
+    margin-top: 10px;
 }
 </style>

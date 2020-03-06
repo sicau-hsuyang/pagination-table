@@ -189,7 +189,7 @@ export default class SerachBox extends Vue {
     &-buttons {
         text-align: right;
         padding-top: 20px;
-        width: 240px;
+        min-width: 160px;
     }
 }
 
