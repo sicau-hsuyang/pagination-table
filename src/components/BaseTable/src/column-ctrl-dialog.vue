@@ -40,50 +40,54 @@
     </el-dialog>
 </template>
 
-<script>
-export default {
-    name: "ColumnCtrlDialog",
-    props: {
-        columns: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            data: [],
-            visible: false
-        };
-    },
-    methods: {
-        showDialog() {
-            this.visible = true;
-        },
-        handleConfirm() {
-            let columns = {};
-            this.data.forEach(column => {
-                columns[column.prop] = column;
-            });
-            this.$emit("submit", columns);
-            this.handleClose();
-        },
-        handleClose() {
-            this.visible = false;
-        },
-        handleOpen() {
-            this.data.clear();
-            this.data.push(
-                ...Object.values(this.columns).map(column => {
-                    return {
-                        label: column.label,
-                        prop: column.prop,
-                        visible: column.visible
-                    };
-                })
-            );
-        }
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { TableColumn } from 'types'
+
+@Component({
+    name: "ColumnCtrlDialog"
+})
+export default class ColumnCtrlDialog extends Vue {
+
+    @Prop({
+        required: true
+    })
+    columns: TableColumn = {};
+
+    visible = false;
+
+    data: any = [];
+
+    showDialog() {
+        this.visible = true;
     }
-};
+
+    handleConfirm() {
+        let columns = {};
+        this.data.forEach(column => {
+            columns[column.prop] = column;
+        });
+        this.$emit("submit", columns);
+        this.handleClose();
+    }
+
+    handleClose() {
+        this.visible = false;
+    }
+
+    handleOpen() {
+        this.data.clear();
+        this.data.push(
+            ...Object.values(this.columns).map(column => {
+                return {
+                    label: column.label,
+                    prop: column.prop,
+                    visible: column.visible
+                };
+            })
+        );
+    }
+}
 </script>
 
 <style scoped>

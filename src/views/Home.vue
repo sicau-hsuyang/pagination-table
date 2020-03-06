@@ -1,5 +1,6 @@
 <template>
     <div>
+          <button @click="handleRefresh">测试刷新</button>
         <BaseTable
             class="pagi-table"
             ref="table"
@@ -146,6 +147,9 @@ export default {
                     });
                 }, 500);
             });
+        },
+        handleRefresh() {
+            this.$refs.table && this.$refs.table.reload(true)
         },
         handleDel(row) {
             alert(row);

@@ -61,102 +61,119 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import utils from './utils'
+@Component({
     name: "SearchToolBox",
-    props: {
-        columns: {
-            type: Object,
-            required: false,
-            default: () => ({})
-        },
-        config: {
-            type: Object,
-            required: false,
-            default: () => ({})
-        }
-    },
-    data() {
-        var meta = this.defaultConfig();
-        return {
-            searchs: [],
-            meta
-        };
-    },
-    watch: {
-        config: {
-            handler() {
-                Object.assign(this.meta, this.config);
-            },
-            deep: true
-        }
-    },
+})
+export default class SerachBox extends Vue {
+
+    @Prop({
+        type: Object,
+        required: false,
+    })
+    columns: Object = {};
+
+    @Prop({
+        type: Object,
+        required: false,
+    })
+    config = {};
+
+    searchs: any = [];
+
+
+    meta = this.defaultConfig();
+
+
+    @Watch("meta", {
+        deep: true,
+    })
+    handleConfigChange() {
+        Object.assign(this.meta, this.config);
+    }
+
     created() {
         this.setSearchBox();
         Object.assign(this.meta, this.config);
-        console.log(this.searchs);
-    },
-    methods: {
-        initialize() {
-            this.searchs.forEach(search => {
-                search.value = Array.isArray(search.value) ? [] : "";
-            });
-        },
-        setSearchBox() {
-            this.searchs.clear();
-            this.searchs.push(
-                ...Object.values(this.mappingColumn()).orderBy(x => x.order)
-            );
-        },
-        defaultConfig() {
-            return {
-                columnConfigurable: true
-            };
-        },
-        mappingColumn() {
-            const mappingObj = {};
-            Object.entries(this.columns || {}).forEach(([key, val]) => {
-                if (val.filterable) {
-                    mappingObj[key] = {
-                        prop: key,
-                        order:
-                            val.filterable && val.filterable.order
-                                ? val.filterable.order
-                                : 1000,
-                        label: val.label,
-                        value: ""
-                    };
-                    // 对于 将配置下拉选项的 筛选
-                    if (Object.isObject(val.filterable)) {
-                        mappingObj[key].component = val.filterable.component;
-                        mappingObj[key].options = val.filterable.options;
-                        mappingObj[key].multi = val.filterable.multi;
-                        val.filterable.multi && (mappingObj[key].value = []);
-                    }
-                }
-            });
-            return mappingObj;
-        },
-        handleQuery() {
-            const query = {};
-            this.searchs.forEach(search => {
-                if (Array.isArray(search.value) && search.value.length) {
-                    query[search.prop] = search.value;
-                } else if (search.value !== "") {
-                    query[search.prop] = search.value;
-                }
-            });
-            this.$emit("query", query);
-        },
-        handleReset() {
-            this.initialize();
-            this.$emit("query", {});
-        },
-        tableSetting() {
-            this.$emit("table-setting");
-        }
     }
-};
+
+
+    initialize() {
+        this.searchs.forEach(search => {
+            search.value = Array.isArray(search.value) ? [] : "";
+        });
+    }
+
+    setSearchBox() {
+        utils.clear(this.searchs);
+        this.searchs.push(...utils.orderBy(Object.values(this.mappingColumn()), x => x.order));
+    }
+
+    defaultConfig() {
+        return {
+            columnConfigurable: true
+        };
+    }
+
+
+    mappingColumn() {
+        const mappingObj = {};
+        Object.entries(this.columns || {}).forEach(([key, val]) => {
+            if (val.filterable) {
+                mappingObj[key] = {
+                    prop: key,
+                    order:
+                        val.filterable && val.filterable.order
+                            ? val.filterable.order
+                            : 1000,
+                    label: val.label,
+                    value: ""
+                };
+                // 对于 将配置下拉选项的 筛选
+                if (utils.isObject(val.filterable)) {
+                    mappingObj[key].component = val.filterable.component;
+                    mappingObj[key].options = val.filterable.options;
+                    mappingObj[key].multi = val.filterable.multi;
+                    val.filterable.multi && (mappingObj[key].value = []);
+                }
+            }
+        });
+        return mappingObj;
+    }
+
+    queryParams() {
+        const query = {};
+        this.searchs.forEach(search => {
+            if (Array.isArray(search.value) && search.value.length) {
+                query[search.prop] = search.value;
+            } else if (search.value !== "") {
+                query[search.prop] = search.value;
+            }
+        });
+        return query
+    }
+
+    getQueryParams() {
+        return this.queryParams()
+    }
+
+    handleQuery() {
+        this.$emit("query", this.queryParams());
+    }
+
+    handleReset() {
+        this.initialize();
+        this.$emit("query", {});
+    }
+
+
+    tableSetting() {
+        this.$emit("table-setting");
+    }
+
+}
 </script>
 
 <style lang="scss" scoped>
