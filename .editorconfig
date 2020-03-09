@@ -1,0 +1,28 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file 表示是最顶层的配置文件，发现设为true时，才会停止查找.editorconfig文件
+root = true
+
+# Unix-style newlines with a newline ending every file 对于所有的文件  始终在文件末尾插入一个新行
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Matches multiple files with brace expansion notation
+# Set default charset  对于所有的js,py文件，设置文件字符集为utf-8
+[*.{js,py}]
+charset = utf-8
+
+# Tab indentation (no size specified) 设置某中文件的缩进风格为tab Makefile未指明
+[Makefile]
+indent_style = tab
+
+# Indentation override for all JS under lib directory  设置在lib目录下所有JS的缩进为
+[lib/**.js]
+indent_style = space
+indent_size = 2
+
+# Matches the exact files either package.json or .travis.yml 设置确切文件 package.json/.travis/.yml的缩进类型
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2

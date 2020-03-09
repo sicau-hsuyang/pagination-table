@@ -1,0 +1,23 @@
+{
+  "name": "pagination-table",
+  "version": "0.0.8",
+  "description": "this is a table plugin based on element-ui table intergrates pagination and search",
+  "repository": {
+    "url": "https://github.com/Sicau-HsuYang/pagination-table"
+  },
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pagination",
+    "table",
+    "element-ui"
+  ],
+  "author": "john-yang",
+  "license": "MIT",
+  "dependencies": {
+    "element-ui": "^2.13.0",
+    "lodash.clonedeep": "^4.5.0"
+  }
+}

@@ -14,6 +14,7 @@
     "exceljs": "^3.5.0",
     "general-export": "0.0.2",
     "lodash": "^4.17.15",
+    "lodash.clonedeep": "^4.5.0",
     "pagination-table": "0.0.7",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3",
