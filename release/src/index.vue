@@ -48,7 +48,7 @@
                 :prop="prop"
             ></base-column>
             <el-table-column
-                v-if="typeof meta.operation !== 'undefined'"
+                v-if="meta.operation"
                 label="操作"
             >
                 <template slot-scope="{ row, index }">
@@ -78,14 +78,18 @@
 </template>
 
 <script>
-import deepClone from "lodash.clone";
+import {deepClone} from "./utils";
 const NAMESPACE = "PaginationTable";
+import ColumnCtrlDialog from "./column-ctrl-dialog";
+import TableColumnHelper from "./table-column-helper";
+import BaseColumn from "./table-column.vue";
+import SearchToolbox from "./search-toolbox.vue";
 export default {
     components: {
-        ColumnCtrlDialog: () => import("./column-ctrl-dialog"),
-        TableColumnHelper: () => import("./table-column-helper"),
-        BaseColumn: () => import("./table-column.vue"),
-        SearchToolbox: () => import("./search-toolbox.vue")
+        ColumnCtrlDialog,
+        TableColumnHelper,
+        BaseColumn,
+        SearchToolbox
     },
     props: {
         columns: {
@@ -127,9 +131,7 @@ export default {
             let visibleConfig = {};
             if (this.name) {
                 try {
-                    visibleConfig = JSON.parse(
-                        localStorage.getItem(`${NAMESPACE}/${this.name}`)
-                    );
+                    visibleConfig = JSON.parse(localStorage.getItem(`${NAMESPACE}/${this.name}`)) || {};
                 } catch (ex) {
                     visibleConfig = {};
                 }

@@ -1,6 +1,6 @@
 {
   "name": "pagination-table",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "this is a table plugin based on element-ui table intergrates pagination and search",
   "repository": {
     "url": "https://github.com/Sicau-HsuYang/pagination-table"
@@ -17,7 +17,6 @@
   "author": "john-yang",
   "license": "MIT",
   "dependencies": {
-    "element-ui": "^2.13.0",
-    "lodash.clonedeep": "^4.5.0"
+    "element-ui": "^2.13.0"
   }
 }

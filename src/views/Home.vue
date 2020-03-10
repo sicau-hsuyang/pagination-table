@@ -11,7 +11,6 @@
   </div>
 </template>
 <script>
-import GeneralExport from "general-export/dist/main.web.js";
 export default {
   name: "Home",
   data() {
@@ -107,9 +106,6 @@ export default {
   },
   methods: {
     export2File() {
-      let tableData = this.$refs.table.getTableData(false);
-      console.log(tableData);
-      GeneralExport("数据.xlsx", tableData);
     },
     async loadData({ pageSize, pageNum, name, ticket }, sortpParams) {
       let res = await this.$http.get("/api/data", {
