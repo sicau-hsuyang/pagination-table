@@ -106,6 +106,7 @@ export default {
   },
   methods: {
     export2File() {
+      this.$refs.table.navTo({ pageSize: '50', pageNum: '100'})
     },
     async loadData({ pageSize, pageNum, name, ticket }, sortpParams) {
       let res = await this.$http.get("/api/data", {

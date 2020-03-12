@@ -271,6 +271,19 @@ export default {
             this.meta.serverSort && (this.preventTableSort = true);
             this.loadData(this.queryParams);
         },
+        navTo({pageSize, pageNum} = { pageSize: 10, pageNum: 1 }) {
+            if(!this.meta.showPagination) {
+                console.warn("you haven`t enable the pagination function, this method will not run");
+                return;
+            }
+            if(Number.parseInt(pageNum) != pageNum || !this.meta.pageSizeOptions.includes(+pageSize)) {
+                console.error("pagination paramerter is not correct, please check your input!");
+                return;
+            }
+            this.currentPage = +pageNum;
+            this.pageSize = +pageSize;
+            this.reload(false);
+        },
         reload(back2first) {
             this.meta.showPagination && back2first && this.back2First();
             this.meta.serverSort && (this.preventTableSort = true);
@@ -427,7 +440,8 @@ export default {
          * @param {Boolean} raw 是否是纯数据
          */
         getTableData(raw = true) {
-            let outputList = this.tableList.map(item => deepClone(item));
+            //todo 目前还没有处理分页的情况
+            let outputList = this.tableList.map(item => deepClone(item)) ;
             return raw ? outputList : this._getTransformData(outputList);
         }
     }
