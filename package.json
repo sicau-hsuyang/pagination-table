@@ -9,7 +9,7 @@
     "test:e2e": "vue-cli-service test:e2e"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "deep-clone": "^3.0.3",
     "exceljs": "^3.5.0",
     "general-export": "0.0.2",
