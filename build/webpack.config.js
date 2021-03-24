@@ -2,7 +2,7 @@
  * @Autor: Zhang Yingying
  * @Date: 2020-03-12 20:13:51
  * @LastEditors: Do not edit
- * @LastEditTime: 2021-03-24 23:42:27
+ * @LastEditTime: 2021-03-25 00:02:39
  */
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -26,7 +26,8 @@ module.exports = {
     libraryExport: "default"
   },
   externals: {
-    vue: "Vue"
+    vue: "Vue",
+    "element-ui": "Element"
   },
   devtool: "source-map",
   resolve: {
