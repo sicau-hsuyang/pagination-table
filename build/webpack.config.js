@@ -1,25 +1,34 @@
+/*
+ * @Autor: Zhang Yingying
+ * @Date: 2020-03-12 20:13:51
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2021-03-24 23:42:27
+ */
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
-
-const NODE_ENV = process.env.NODE_ENV === "development";
 
 function resolve(dir) {
   return path.join(__dirname, "..", dir);
 }
 
 module.exports = {
-  mode: NODE_ENV ? "development" : "production",
+  mode: "production",
+  target: "web",
   entry: {
-    main: "../release/index.js"
+    main: "./src/index.js"
   },
   output: {
-    path: path.resolve(__dirname, "../release/dist"),
-    filename: "[name].js",
-    publicPath: "./",
-    libraryTarget: "umd"
+    path: resolve("dist"),
+    filename: "table.js",
+    libraryTarget: "umd",
+    library: "PaginationTable",
+    libraryExport: "default"
   },
-  devtool: "cheap-module-eval-source-map",
+  externals: {
+    vue: "Vue"
+  },
+  devtool: "source-map",
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx", ".vue", ".json"],
     alias: {
@@ -67,18 +76,7 @@ module.exports = {
           "vue-style-loader",
           "style-loader",
           "css-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              plugins: function() {
-                return [
-                  require("autoprefixer")({
-                    overrideBrowserslist: [">0.25%", "not dead"]
-                  })
-                ];
-              }
-            }
-          },
+          "postcss-loader",
           "sass-loader"
         ],
         exclude: /node_modules/
