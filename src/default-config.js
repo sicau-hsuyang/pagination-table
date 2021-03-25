@@ -2,7 +2,7 @@
  * @Author: JohnYang
  * @Date: 2020-08-23 22:13:41
  * @LastEditors: Do not edit
- * @LastEditTime: 2021-03-24 23:00:39
+ * @LastEditTime: 2021-03-25 21:16:17
  */
 /**
  * 生成表格的默认配置
@@ -23,11 +23,10 @@ export default class DefaultConfig {
       sortable: false,
       sortMethod: undefined,
       align: "left",
-      filterable: false,
       order: undefined,
       html: undefined,
       formatter: undefined,
-      $h: undefined,
+      $h: undefined
     };
   }
 
@@ -40,21 +39,12 @@ export default class DefaultConfig {
       rowKey: "id",
       orderProp: "id",
       direction: "ASC",
-      editable: false,
-      filterable: true,
-      sortOrderMapping(direction) {
-        return direction === null
-          ? null
-          : direction === "descending"
-          ? "ASC"
-          : "DESC";
-      },
       pagination: {
         total: 0,
         currentPage: 1,
         pageSize: 10,
-        options: [10, 25, 50, 100],
-      },
+        options: [10, 25, 50, 100]
+      }
     };
   }
 

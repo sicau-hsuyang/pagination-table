@@ -80,10 +80,8 @@
               },
               defaultSort: { prop: "createTime", order: "descending" },
               serverSort: false,
-              showSearchbox: true,
               showCheckbox: true,
-              fetchTableData: this.loadData,
-              columnConfigurable: true
+              getData: this.loadData
             },
             columns: {
               id: {
@@ -91,7 +89,6 @@
               },
               name: {
                 label: "景点",
-                filterable: true,
                 html(name, row) {
                   return `<a class="link" href=${row.url} target="_blank">${name}</a>`;
                 }
@@ -138,16 +135,10 @@
         },
         methods: {
           async loadData({ pageSize, pageNum, name, ticket }, sortpParams) {
-            let res = await this.$http.get("/api/data", {
-              params: {
-                pageSize,
-                pageNum,
-                name,
-                ticket,
-                ...sortpParams
-              }
-            });
-            return res.data;
+            return {
+              data: [],
+              total: 0
+            };
           },
           handleDel(row) {
             console.log(row);
