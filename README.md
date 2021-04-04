@@ -1,4 +1,4 @@
-# 基于 ElementUI-Table 构建的可分页搜索表格
+# 基于 ElementUI-Table 构建的可分页表格
 
 表格列通过使用配置呈现不同的功能，可支持自定义列、v-html、formatter 等功能，表格具备分页功能，可以通过配置开关该功能。
 ![无法加载图片](https://raw.githubusercontent.com/Sicau-HsuYang/pagination-table/master/src/assets/table-demo.png "图片title")
@@ -38,16 +38,16 @@ export default {
   data() {
     return {
       tableConfig: {
-        getData: this.loadData
+        getData: this.loadData,
       },
       tableColumns: {
         name: {
-          label: "姓名"
+          label: "姓名",
         },
         age: {
-          label: "年纪"
-        }
-      }
+          label: "年纪",
+        },
+      },
     };
   },
   methods: {
@@ -62,8 +62,8 @@ export default {
      */
     reloadTable(back2first) {
       this.$refs.table && this.$refs.table.reload(back2first);
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -91,7 +91,7 @@ export default {
 <script src="./libs/main.js"></script>
 <script>
   Vue.use(PaginationTable, {
-    name: "BaseTable"
+    name: "BaseTable",
   });
 
   new Vue({
@@ -107,77 +107,62 @@ export default {
                 h("el-button", {
                   props: {
                     size: "mini",
-                    type: "success"
+                    type: "success",
                   },
                   domProps: {
-                    innerText: "标记"
+                    innerText: "标记",
                   },
                   on: {
-                    click: $event => {
+                    click: ($event) => {
                       $event.preventDefault();
                       $event.stopPropagation();
                       _this.handleMark(row);
-                    }
-                  }
+                    },
+                  },
                 }),
                 h("el-button", {
                   props: {
                     size: "mini",
-                    type: "danger"
+                    type: "danger",
                   },
                   on: {
-                    click: $event => {
+                    click: ($event) => {
                       $event.stopPropagation();
                       $event.preventDefault();
                       _this.handleDel(row);
-                    }
+                    },
                   },
                   domProps: {
-                    innerText: "删除"
-                  }
-                })
+                    innerText: "删除",
+                  },
+                }),
               ]);
-            }
+            },
           },
           defaultSort: { prop: "createTime", order: "descending" },
           serverSort: false,
-          showSearchbox: true,
           showCheckbox: true,
           fetchTableData: this.loadData,
-          columnConfigurable: true
+          columnConfigurable: true,
         },
         columns: {
           id: {
-            label: "景点编号"
+            label: "景点编号",
           },
           name: {
             label: "景点",
-            filterable: true,
             html(name, row) {
               return `<a class="link" href=${row.url} target="_blank">${name}</a>`;
-            }
+            },
           },
           location: {
-            label: "所在位置"
+            label: "所在位置",
           },
           ticket: {
             label: "是否需要门票",
-            filterable: {
-              order: 2,
-              options: [
-                {
-                  label: "是",
-                  value: 1
-                },
-                {
-                  label: "否",
-                  value: 2
-                }
-              ]
-            },
             formatter(ticket) {
               return ticket ? "是" : "否";
-            }
+            },
           },
           price: {
             label: "价格",
@@ -185,19 +170,19 @@ export default {
               return typeof price === "number" && !Number.isNaN(price)
                 ? "￥" + price
                 : "-";
-            }
+            },
           },
           createTime: {
             label: "创建时间",
-            sortable: true
-          }
-        }
+            sortable: true,
+          },
+        },
       };
     },
     methods: {
       async loadData({ pageSize, pageNum, name, ticket }, sortpParams) {
         let res = await axios.get("/api/data", {
-          params: { pageSize, pageNum, name, ticket, ...sortpParams }
+          params: { pageSize, pageNum, name, ticket, ...sortpParams },
         });
         return res.data;
       },
@@ -206,8 +191,8 @@ export default {
       },
       handleMark(row) {
         console.log(row);
-      }
-    }
+      },
+    },
   });
 </script>
 ```
@@ -281,18 +266,18 @@ export default {
   data() {
     return {
       config: {
-        getData: []
+        getData: [],
       },
       columns: {
         name: {
-          label: "姓名"
+          label: "姓名",
         },
         age: {
-          label: "年龄"
-        }
-      }
+          label: "年龄",
+        },
+      },
     };
-  }
+  },
 };
 </script>
 ```
