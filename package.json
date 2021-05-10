@@ -18,7 +18,7 @@
     "deep-clone": "^3.0.3",
     "element-ui": "^2.15.1",
     "file-loader": "^6.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "postcss-loader": "^5.2.0",
     "postcss-preset-env": "^6.7.0",
     "sass": "^1.32.8",
